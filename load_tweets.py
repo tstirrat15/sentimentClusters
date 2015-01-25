@@ -1,39 +1,99 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-# import json
+import json
 # import dataset
 # import birdy
 import os.path
+import settings
+import sqlite3
 
-scriptpath = os.path.dirname(os.path.abspath(__file__))
+"""All of this really needs to be encapsulated for how much flipping
+cross-referencing I'm doing."""
 
-data_directory = os.path.join(scriptpath, 'data/tinySample')
-data_path = os.path.join(data_directory, 'tinysample.txt')
+"""Also, I had completely forgotten about dataset. I should refactor this to
+use it."""
 
-print(os.getcwd())
-print(data_path)
-f = open(data_path, 'r')
-content = f.read()
+"""Currently, it seems as though there's an issue with the way I'm defining my
+columns. I think it might have something to do with having a column called "text",
+which I think is typically reserved for typenames."""
 
-print("content is:")
-print(content)
-
-# The lesson: use consistent filename conventions. Christ.
-
-# data_file = os.path.join(scriptpath, './data/tinysample/tinysample.json')
-# testFile = open(data_file)
-# print(testFile.read())
-
-# files = os.listdir(data_directory)  # Get all the files in that directory
-# print("Files in '%s': %s" % (data_directory, files))
-
-# print(data_directory)
-
-# tweets = []
+"""Next step is to just do this as a flat table, with user id being just put in
+there. It'll require some hardcoding of referenced attributes, but that shouldn't
+be too bad if i use getattr()"""
 
 
-# for line in open(os.path.join(data_directory, "tinysample.json"), 'r'):
-#     tweets.append(line.json(object_hook=birdy.BaseTwitterClient.get_json_object_hook))
+def make_table(connection, table_name, table_header_list):
+    table_headers = "(" + ",".join(table_header_list) + ")"
+    query = "create table if not exists " + table_name + " " + table_headers
+    print("table creation query:")
+    print(query)
+    connection.execute(query)
 
-# print(tweets[1].favorite_count)
+
+def make_value_list(dictionary):
+
+    # Get all data at first level
+    data = [dictionary[key] for key in sorted(dictionary.keys())
+            if not isinstance(dictionary[key], dict)]
+
+    # Turn all of this into a tuple and return;
+    # should preserve order.
+    return data
+
+
+def table_creation_query_list(column_dict):
+    return [key + " " + column_dict[key] for key in sorted(column_dict.keys())]
+
+
+def make_insertion_tuples(json_entry):
+    json_dict = json.loads(json_entry)
+
+    tweet_values = [json_dict[key] for key in sorted(settings.TWEET_ATTRIBUTES.keys()) if not key == "user_id_str"]
+    tweet_values += [json_dict["user"]["id_str"]]
+    tweet_values = tuple(tweet_values)
+    user_values = tuple([json_dict["user"][key] for key in sorted(settings.USER_ATTRIBUTES.keys())])
+
+    return tweet_values, user_values
+
+
+if __name__ == '__main__':
+    file_path = os.path.join(settings.JSON_DIR, 'tiny_sample.json')
+    db_path = os.path.join(settings.SQL_DIR, 'tiny_sample.json')
+
+    user_column_list = table_creation_query_list(settings.USER_ATTRIBUTES)
+    print("User headers:")
+    print(user_column_list)
+    tweet_column_list = table_creation_query_list(settings.TWEET_ATTRIBUTES)
+    print("Tweet headers:")
+    print(tweet_column_list)
+
+    # Append foreign ID to tweets so that tweets are associated with users.
+    # Doesn't really make sense in the 1-to-many sense, but oh well.
+    tweet_column_list.append("foreign key(user_id_str) references users(id_str)")
+
+    # Also means that I have to be careful to add users before I add associated tweets
+
+    with open(file_path, "r") as json_file:
+        with sqlite3.connect(db_path) as con:
+
+            # Create user and tweet tables, if not already done
+            make_table(con, "users", user_column_list)
+            make_table(con, "tweets", tweet_column_list)
+
+            tweet_data = []
+            user_data = []
+
+            # Create all of the queries at once
+            for json_entry in json_file:
+                tweet_values, user_values = make_insertion_tuples(json_entry)
+                tweet_data.append(tweet_values)
+                user_data.append(user_values)
+
+            # insert user data
+            # Get the length of the user tuple and construct a ? string
+            user_qm_string = "(" + ",".join(["?"] * len(user_data[0])) + ")"
+            con.executemany("INSERT OR IGNORE INTO users VALUES " + user_qm_string, user_data)
+
+            tweet_qm_string = "(" + ",".join(["?"] * len(tweet_data[0])) + ")"
+            con.executemany("INSERT INTO tweets VALUES " + tweet_qm_string, tweet_data)
