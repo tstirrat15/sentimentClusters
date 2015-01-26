@@ -58,15 +58,11 @@ def make_insertion_tuples(json_entry):
 
 
 if __name__ == '__main__':
-    file_path = os.path.join(settings.JSON_DIR, 'tiny_sample.json')
-    db_path = os.path.join(settings.SQL_DIR, 'tiny_sample.json')
+    file_path = os.path.join(settings.JSON_DIR, 'sample.json')
+    db_path = os.path.join(settings.SQL_DIR, 'sample.db')
 
     user_column_list = table_creation_query_list(settings.USER_ATTRIBUTES)
-    print("User headers:")
-    print(user_column_list)
     tweet_column_list = table_creation_query_list(settings.TWEET_ATTRIBUTES)
-    print("Tweet headers:")
-    print(tweet_column_list)
 
     # Append foreign ID to tweets so that tweets are associated with users.
     # Doesn't really make sense in the 1-to-many sense, but oh well.
