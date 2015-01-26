@@ -22,12 +22,13 @@ which I think is typically reserved for typenames."""
 there. It'll require some hardcoding of referenced attributes, but that shouldn't
 be too bad if i use getattr()"""
 
+"""Also, change this to make it into a command-line utility - use sysvargs
+instead of hardcoding filepaths. Let the command line take care of things."""
+
 
 def make_table(connection, table_name, table_header_list):
     table_headers = "(" + ",".join(table_header_list) + ")"
     query = "create table if not exists " + table_name + " " + table_headers
-    print("table creation query:")
-    print(query)
     connection.execute(query)
 
 
@@ -85,6 +86,11 @@ if __name__ == '__main__':
                 tweet_values, user_values = make_insertion_tuples(json_entry)
                 tweet_data.append(tweet_values)
                 user_data.append(user_values)
+
+            print("First line of user_data:")
+            print(user_data[0])
+            print("First line of tweet_data:")
+            print(tweet_data[0])
 
             # insert user data
             # Get the length of the user tuple and construct a ? string
