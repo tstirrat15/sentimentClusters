@@ -2,6 +2,7 @@ import settings
 import os.path
 import re
 import dataset
+import itertools
 
 # NTLK imports
 import nltk.corpus
@@ -29,12 +30,16 @@ class JaccardProcessor(object):
     def __init__(self):
         self.stopwords = nltk.corpus.stopwords.words("english")
         self.stemmer = nltk.stem.snowball.SnowballStemmer('english')
-        self.tokenize = word_tokenize
+
+        # Trying different options for tokenizing
+        # self.tokenize = word_tokenize
 
         # Compile regex expressions for later reuse
         self.retweet_regex = re.compile(r'^rt @[\w]{1,15}: ')
         self.ferguson_ht_regex = re.compile(r'#ferguson')
         self.url_regex = re.compile(r'http[s]?://\S+\b/?')
+        self.callout_regex = re.compile(r'@\w+')
+        self.token_regex = re.compile(r'\b\S+\b')
 
         # Claim the function. Not sure if this works this way.
         self.jaccard = jaccard
@@ -48,6 +53,9 @@ class JaccardProcessor(object):
         tweet = self.ferguson_ht_regex.sub('', tweet)
         # Remove URLs
         tweet = self.url_regex.sub('', tweet)
+        # Remove @ references
+        tweet = self.callout_regex.sub('', tweet)
+        # Remove leading and trailing whitespace
         # Split on whitespace
         tokens = self.tokenize(tweet)
         # Remove stopwords
@@ -56,6 +64,14 @@ class JaccardProcessor(object):
         # Return tokens. Jaccard already does the setting, so no
         # need to return as set.
         return tokens
+
+    def tokenize(self, string):
+        """Custom tokenizing function. Splits on word boundaries
+        with whitespace between them. """
+        return self.token_regex.findall(string)
+
+    def output_jaccard_indices(cleaned_tweets):
+        pass
 
 if __name__ == "__main__":
     p = JaccardProcessor()
@@ -66,6 +82,13 @@ if __name__ == "__main__":
         "RT @petewentz: :( #ferguson",
         """RT @_DirtyTruths: #Ferguson: Cops Gone Wild - The most fatal mistake that any American can make is to call the police http://t.co/g7zFAkl0…""",
     ]
-    for tweet in tweets:
-        print(tweet)
-        print(p.process_tweet(tweet))
+    # This is how we get the pairwise stuff
+    for first, second in itertools.combinations(tweets, 2):
+        first_processed = p.process_tweet(first)
+        second_processed = p.process_tweet(second)
+        print("===========")
+        print(first)
+        print(first_processed)
+        print(second)
+        print(second_processed)
+        print(p.jaccard(first_processed, second_processed))
