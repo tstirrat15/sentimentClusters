@@ -6,17 +6,9 @@ import dataset
 import os.path
 import settings
 
-"""All of this really needs to be encapsulated for how much flipping
-cross-referencing I'm doing."""
-
-"""Also, I had completely forgotten about dataset. I should refactor this to
-use it."""
 
 """Also, change this to make it into a command-line utility - use sysvargs
 instead of hardcoding filepaths. Let the command line take care of things."""
-
-"""Current issue: non-uniqueness of table entries. Need to figure out what
-Dataset is doing there."""
 
 # Borrowed from Birdy: https://github.com/inueni/birdy
 # Changed "name in self.iterkeys()" to "name in self.keys()"
@@ -83,8 +75,8 @@ def get_tweet_dict_from_object(tweet_object):
     return tweet_dict
 
 if __name__ == '__main__':
-    file_path = os.path.join(settings.JSON_DIR, 'sample.json')
-    db_path = os.path.join(settings.SQL_DIR, 'sample.db')
+    file_path = os.path.join(settings.JSON_DIR, 'indictment_sample.json')
+    db_path = os.path.join(settings.SQL_DIR, 'indictment_sample.db')
 
     with open(file_path, "r") as json_file:
         with dataset.connect("sqlite:///" + db_path) as db:
