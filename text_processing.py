@@ -3,11 +3,10 @@ import os.path
 import re
 import dataset
 import itertools
+import datetime
 
 # NTLK imports
 import nltk.corpus
-import nltk.stem.snowball
-from nltk import word_tokenize
 
 # Distance import
 from distance import jaccard
@@ -58,7 +57,6 @@ class JaccardProcessor(object):
         tweet = self.url_regex.sub('', tweet)
         # Remove @ references
         tweet = self.callout_regex.sub('', tweet)
-        # Remove leading and trailing whitespace
         # Split on whitespace
         tokens = self.tokenize(tweet)
         # Remove stopwords
@@ -75,16 +73,30 @@ class JaccardProcessor(object):
 
 
 if __name__ == "__main__":
-    db_path = os.path.join(settings.SQL_DIR)
+
+    start = datetime.datetime.now()
+
+    db_name = "tiny_sample.db"
+    db_path = os.path.join(settings.SQL_DIR, db_name)
+
+    network_name = "tiny_sample.ipairs"
+    network_path = os.path.join(settings.NETWORK_DIR, "tiny_sample.ipairs")
+
+    db = dataset.connect("sqlite:///" + db_path)
+
     p = JaccardProcessor()
 
-    # This is how we get the pairwise stuff
-    for first, second in itertools.combinations(tweets, 2):
-        first_processed = p.process_tweet(first)
-        second_processed = p.process_tweet(second)
-        print("===========")
-        print(first)
-        print(first_processed)
-        print(second)
-        print(second_processed)
-        print(p.jaccard(first_processed, second_processed))
+    tweets = [Tweet(row["id_str"], row["text"]) for row in db["tweets"].all()]
+
+    for tweet in tweets:
+        tweet.cleaned = p.process_tweet(tweet.content)
+
+    with open(network_path, "w") as output:
+        for first, second in itertools.combinations(tweets, 2):
+            distance = 1 - p.jaccard(first.cleaned, second.cleaned)
+            if distance:
+                output.write("{0} {1} {2}\n{1} {0} {2}\n".format(first.tweet_id,
+                                                             second.tweet_id,
+                                                             distance))
+
+    print(datetime.datetime.now() - start)
