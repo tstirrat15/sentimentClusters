@@ -14,16 +14,16 @@ from distance import jaccard
 
 
 # Access SQL database
-# Get set of tweets pulled in
+# Get set of tweets pulled in as tuples:
 
 # Someday: set this up for parallel processing, based on number of cores
 
-# Things to do for text processing:
-# Remove retweet string
-# Remove ferguson hashtag
-# Tokenize
-# Remove stopwords
-# Stem
+class Tweet(object):
+    """Holds attributes of tweets"""
+    def __init__(self, tweet_id, tweet_text):
+        self.tweet_id = tweet_id
+        self.content = tweet_text
+
 
 class JaccardProcessor(object):
     """docstring for JaccardProcessor"""
@@ -42,6 +42,9 @@ class JaccardProcessor(object):
         self.token_regex = re.compile(r'\b\S+\b')
 
         # Claim the function. Not sure if this works this way.
+        # It does! but it also probably makes sense to pull this
+        # outside of the function. Everything else about this class
+        # is just text processing.
         self.jaccard = jaccard
 
     def process_tweet(self, tweet):
@@ -70,18 +73,11 @@ class JaccardProcessor(object):
         with whitespace between them. """
         return self.token_regex.findall(string)
 
-    def output_jaccard_indices(cleaned_tweets):
-        pass
 
 if __name__ == "__main__":
+    db_path = os.path.join(settings.SQL_DIR)
     p = JaccardProcessor()
-    tweets = [
-        "RT @KiaHutch: How is this BETTER than what we've been seeing the past few nights? How is this your go to @GovJayNixon? #Ferguson",
-        "RT @WRDSMATTER: Racial reactions to Ferguson even stronger than to Trayvon Martin http://t.co/WUvlce1cfA",
-        "Tiffany Mitchell, eyewitness said that #MikeBrown was trying to get away from the cop, from the car. Cop pursued while shooting #Ferguson",
-        "RT @petewentz: :( #ferguson",
-        """RT @_DirtyTruths: #Ferguson: Cops Gone Wild - The most fatal mistake that any American can make is to call the police http://t.co/g7zFAkl0…""",
-    ]
+
     # This is how we get the pairwise stuff
     for first, second in itertools.combinations(tweets, 2):
         first_processed = p.process_tweet(first)
