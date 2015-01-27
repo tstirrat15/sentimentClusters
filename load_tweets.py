@@ -2,11 +2,9 @@
 # -*- coding: UTF-8 -*-
 
 import json
-# import dataset
-# import birdy
+import dataset
 import os.path
 import settings
-import sqlite3
 
 """All of this really needs to be encapsulated for how much flipping
 cross-referencing I'm doing."""
@@ -14,88 +12,82 @@ cross-referencing I'm doing."""
 """Also, I had completely forgotten about dataset. I should refactor this to
 use it."""
 
-"""Currently, it seems as though there's an issue with the way I'm defining my
-columns. I think it might have something to do with having a column called "text",
-which I think is typically reserved for typenames."""
-
-"""Next step is to just do this as a flat table, with user id being just put in
-there. It'll require some hardcoding of referenced attributes, but that shouldn't
-be too bad if i use getattr()"""
-
 """Also, change this to make it into a command-line utility - use sysvargs
 instead of hardcoding filepaths. Let the command line take care of things."""
 
+"""Current issue: non-uniqueness of table entries. Need to figure out what
+Dataset is doing there."""
 
-def make_table(connection, table_name, table_header_list):
-    table_headers = "(" + ",".join(table_header_list) + ")"
-    query = "create table if not exists " + table_name + " " + table_headers
-    connection.execute(query)
-
-
-def make_value_list(dictionary):
-
-    # Get all data at first level
-    data = [dictionary[key] for key in sorted(dictionary.keys())
-            if not isinstance(dictionary[key], dict)]
-
-    # Turn all of this into a tuple and return;
-    # should preserve order.
-    return data
+# Borrowed from Birdy: https://github.com/inueni/birdy
+# Changed "name in self.iterkeys()" to "name in self.keys()"
+# which fixed things for python3.
 
 
-def table_creation_query_list(column_dict):
-    return [key + " " + column_dict[key] for key in sorted(column_dict.keys())]
+class JSONObject(dict):
+    def __getattr__(self, name):
+        if name in self.keys():
+            return self[name]
+        raise AttributeError('%s has no property named %s.'
+                             % (self.__class__.__name__, name))
+
+    def __setattr__(self, *args):
+        raise AttributeError('%s instances are read-only.'
+                             % self.__class__.__name__)
+    __delattr__ = __setitem__ = __delitem__ = __setattr__
+
+    def __repr__(self):
+        return '<%s: %s>' % (self.__class__.__name__, dict.__repr__(self))
 
 
-def make_insertion_tuples(json_entry):
-    json_dict = json.loads(json_entry)
+def get_object_hook(data):
+    return JSONObject(data)
 
-    tweet_values = [json_dict[key] for key in sorted(settings.TWEET_ATTRIBUTES.keys()) if not key == "user_id_str"]
-    tweet_values += [json_dict["user"]["id_str"]]
-    tweet_values = tuple(tweet_values)
-    user_values = tuple([json_dict["user"][key] for key in sorted(settings.USER_ATTRIBUTES.keys())])
 
-    return tweet_values, user_values
+def get_tweet_data(json_string):
+    tweet_object = json.loads(json_string, object_hook=get_object_hook)
+    tweet_dict = get_tweet_dict_from_object(tweet_object)
+    return tweet_dict
 
+
+def get_tweet_dict_from_object(tweet_object):
+    tweet_dict = {}
+
+    # Assigning all of the attributes to dictionary values
+    tweet_dict["text"] = tweet_object.text
+    tweet_dict["id_str"] = tweet_object.id_str
+    tweet_dict["retweeted"] = tweet_object.retweeted
+    tweet_dict["created_at"] = tweet_object.created_at
+    tweet_dict["retweet_count"] = tweet_object.retweet_count
+    tweet_dict["truncated"] = tweet_object.truncated
+    tweet_dict["user_id_str"] = tweet_object.user.id_str
+
+    # Handle coordinate values
+    if tweet_object.coordinates:
+        tweet_dict["tweet_lat"] = tweet_object.coordinates.coordinates[1]
+        tweet_dict["tweet_long"] = tweet_object.coordinates.coordinates[0]
+    else:
+        tweet_dict["tweet_lat"] = None
+        tweet_dict["tweet_long"] = None
+
+    tweet_dict["user_created_at"] = tweet_object.user.created_at
+    tweet_dict["user_description"] = tweet_object.user.description
+    tweet_dict["user_followers_count"] = tweet_object.user.followers_count
+    tweet_dict["user_friends_count"] = tweet_object.user.friends_count
+    tweet_dict["user_location"] = tweet_object.user.location
+    tweet_dict["user_screen_name"] = tweet_object.user.screen_name
+    tweet_dict["user_statuses_count"] = tweet_object.user.statuses_count
+    tweet_dict["user_time_zone"] = tweet_object.user.time_zone
+    tweet_dict["user_utc_offset"] = tweet_object.user.utc_offset
+    tweet_dict["user_verified"] = tweet_object.user.verified
+
+    return tweet_dict
 
 if __name__ == '__main__':
     file_path = os.path.join(settings.JSON_DIR, 'sample.json')
     db_path = os.path.join(settings.SQL_DIR, 'sample.db')
 
-    user_column_list = table_creation_query_list(settings.USER_ATTRIBUTES)
-    tweet_column_list = table_creation_query_list(settings.TWEET_ATTRIBUTES)
-
-    # Append foreign ID to tweets so that tweets are associated with users.
-    # Doesn't really make sense in the 1-to-many sense, but oh well.
-    tweet_column_list.append("foreign key(user_id_str) references users(id_str)")
-
-    # Also means that I have to be careful to add users before I add associated tweets
-
     with open(file_path, "r") as json_file:
-        with sqlite3.connect(db_path) as con:
-
-            # Create user and tweet tables, if not already done
-            make_table(con, "users", user_column_list)
-            make_table(con, "tweets", tweet_column_list)
-
-            tweet_data = []
-            user_data = []
-
-            # Create all of the queries at once
-            for json_entry in json_file:
-                tweet_values, user_values = make_insertion_tuples(json_entry)
-                tweet_data.append(tweet_values)
-                user_data.append(user_values)
-
-            print("First line of user_data:")
-            print(user_data[0])
-            print("First line of tweet_data:")
-            print(tweet_data[0])
-
-            # insert user data
-            # Get the length of the user tuple and construct a ? string
-            user_qm_string = "(" + ",".join(["?"] * len(user_data[0])) + ")"
-            con.executemany("INSERT OR IGNORE INTO users VALUES " + user_qm_string, user_data)
-
-            tweet_qm_string = "(" + ",".join(["?"] * len(tweet_data[0])) + ")"
-            con.executemany("INSERT INTO tweets VALUES " + tweet_qm_string, tweet_data)
+        with dataset.connect("sqlite:///" + db_path) as db:
+            tweet_dicts = [get_tweet_data(json_string)
+                           for json_string in json_file]
+            db["tweets"].insert_many(tweet_dicts)
