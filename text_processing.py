@@ -1,3 +1,4 @@
+# Python imports
 import os.path
 import re
 import dataset
@@ -20,8 +21,11 @@ class Tweet(object):
         self.content = tweet_text
 
 
-class JaccardProcessor(object):
-    """docstring for JaccardProcessor"""
+class TweetProcessor(object):
+    """Class that provides tweet processing specific to
+    our Jaccard index analysis. Encapsulates the regular
+    expressions and stopwords for reuse upon multiple
+    calls to process_tweet."""
     def __init__(self):
         self.stopwords = nltk.corpus.stopwords.words("english")
 
@@ -81,16 +85,21 @@ if __name__ == "__main__":
     if not os.path.isdir(os.path.dirname(network_path)):
         raise FileNotFoundError("Can't write to path:\n{0}\nCheck that directories exist.".format(network_path))
 
+    # Set up dataset connection to database
     db = dataset.connect("sqlite:///" + db_path)
 
-    p = JaccardProcessor()
-
+    # Make list of Tweet objects out of db rows
     tweets = [Tweet(row["id_str"], row["text"]) for row in db["tweets"].all()]
 
+    # Initialize the tweet processor
+    p = TweetProcessor()
+
+    # Clean all tweets on one pass.
     for tweet in tweets:
         tweet.cleaned = p.process_tweet(tweet.content)
 
     with open(network_path, "w") as output:
+        # Iterates over all pairs without repetition
         for first, second in itertools.combinations(tweets, 2):
 
             # Only try and calculate distance if both sets are nonempty
@@ -103,6 +112,10 @@ if __name__ == "__main__":
             # Only write to output if distance is nonzero - makes the
             # network file smaller and easier to handle. Can easily
             # be parsed in later.
+
+            # Output format is based on GANXiS's input specification.
+            # GANXiS looks for edges in both directions, so print tweet
+            # IDs in both orders.
             if distance:
                 output.write("{0} {1} {2}\n{1} {0} {2}\n".format(first.tweet_id,
                                                                  second.tweet_id,
