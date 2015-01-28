@@ -8,7 +8,7 @@ def parse_line(line, label):
     into id_str tokens, and returns a list of dictionaries for updating
     the database"""
     tokens = line.split(" ")
-    return [{"id_str": token, "category": label} for token in tokens]
+    return [{"id_str": token, "community": label} for token in tokens]
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser("""Takes the ouput of a GANXiS document as
