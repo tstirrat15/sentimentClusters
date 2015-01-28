@@ -3,19 +3,13 @@
 
 import json
 import dataset
-import os.path
-import settings
-
-
-"""Also, change this to make it into a command-line utility - use sysvargs
-instead of hardcoding filepaths. Let the command line take care of things."""
-
-# Borrowed from Birdy: https://github.com/inueni/birdy
-# Changed "name in self.iterkeys()" to "name in self.keys()"
-# which fixed things for python3.
+import argparse
 
 
 class JSONObject(dict):
+    # Borrowed from Birdy: https://github.com/inueni/birdy
+    # Changed "name in self.iterkeys()" to "name in self.keys()"
+    # which fixed things for python3.
     def __getattr__(self, name):
         if name in self.keys():
             return self[name]
@@ -75,11 +69,16 @@ def get_tweet_dict_from_object(tweet_object):
     return tweet_dict
 
 if __name__ == '__main__':
-    file_path = os.path.join(settings.JSON_DIR, 'indictment_sample.json')
-    db_path = os.path.join(settings.SQL_DIR, 'indictment_sample.db')
+    # Set up argparse
+    parser = argparse.ArgumentParser()
 
-    with open(file_path, "r") as json_file:
-        with dataset.connect("sqlite:///" + db_path) as db:
+    parser.add_argument("input", help="Relative path to JSON input file")
+    parser.add_argument("output", help="Relative path to desired SQLite DB output location")
+
+    args = parser.parse_args()
+
+    with open(args.input, "r") as json_file:
+        with dataset.connect("sqlite:///" + args.output) as db:
             tweet_dicts = [get_tweet_data(json_string)
                            for json_string in json_file]
             db["tweets"].insert_many(tweet_dicts)
