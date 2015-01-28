@@ -70,7 +70,9 @@ def get_tweet_dict_from_object(tweet_object):
 
 if __name__ == '__main__':
     # Set up argparse
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser("""Takes a file of line-oriented
+        Tweet JSON objects as input and outputs a selection of values
+        to an SQLite database.""")
 
     parser.add_argument("input", help="Relative path to JSON input file")
     parser.add_argument("output", help="Relative path to desired SQLite DB output location")
