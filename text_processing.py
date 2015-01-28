@@ -1,9 +1,8 @@
-import settings
 import os.path
 import re
 import dataset
 import itertools
-import datetime
+import argparse
 
 # NTLK imports
 import nltk.corpus
@@ -11,9 +10,6 @@ import nltk.corpus
 # Distance import
 from distance import jaccard
 
-
-# Access SQL database
-# Get set of tweets pulled in as tuples:
 
 # Someday: set this up for parallel processing, based on number of cores
 
@@ -28,7 +24,6 @@ class JaccardProcessor(object):
     """docstring for JaccardProcessor"""
     def __init__(self):
         self.stopwords = nltk.corpus.stopwords.words("english")
-        self.stemmer = nltk.stem.snowball.SnowballStemmer('english')
 
         # Trying different options for tokenizing
         # self.tokenize = word_tokenize
@@ -39,12 +34,6 @@ class JaccardProcessor(object):
         self.url_regex = re.compile(r'http[s]?://\S+\b/?')
         self.callout_regex = re.compile(r'@\w+')
         self.token_regex = re.compile(r'\b\S+\b')
-
-        # Claim the function. Not sure if this works this way.
-        # It does! but it also probably makes sense to pull this
-        # outside of the function. Everything else about this class
-        # is just text processing.
-        self.jaccard = jaccard
 
     def process_tweet(self, tweet):
         # Send to lower
@@ -74,13 +63,23 @@ class JaccardProcessor(object):
 
 if __name__ == "__main__":
 
-    start = datetime.datetime.now()
+    # Set up argument parsing
+    parser = argparse.ArgumentParser()
+    parser.add_argument("input", help="Input SQLite file")
+    parser.add_argument("output", help="Output file - .ipairs is the preferable extension")
 
-    db_name = "tiny_sample.db"
-    db_path = os.path.join(settings.SQL_DIR, db_name)
+    # Grab arguments from command line
+    args = parser.parse_args()
 
-    network_name = "tiny_sample.ipairs"
-    network_path = os.path.join(settings.NETWORK_DIR, "tiny_sample.ipairs")
+    # Make paths out of paths from command line
+    # May actually be extraneous...
+    db_path = os.path.join(os.getcwd(), args.input)
+    network_path = os.path.join(os.getcwd(), args.output)
+
+    # Make sure that we can actually write to the
+    # file before we start iteration
+    if not os.path.isdir(os.path.dirname(network_path)):
+        raise FileNotFoundError("Can't write to path:\n{0}\nCheck that directories exist.".format(network_path))
 
     db = dataset.connect("sqlite:///" + db_path)
 
@@ -93,10 +92,18 @@ if __name__ == "__main__":
 
     with open(network_path, "w") as output:
         for first, second in itertools.combinations(tweets, 2):
-            distance = 1 - p.jaccard(first.cleaned, second.cleaned)
+
+            # Only try and calculate distance if both sets are nonempty
+            # Otherwise jaccard index has a divide by zero error
+            if first.cleaned and second.cleaned:
+                distance = 1 - jaccard(first.cleaned, second.cleaned)
+            else:
+                distance = 0
+
+            # Only write to output if distance is nonzero - makes the
+            # network file smaller and easier to handle. Can easily
+            # be parsed in later.
             if distance:
                 output.write("{0} {1} {2}\n{1} {0} {2}\n".format(first.tweet_id,
-                                                             second.tweet_id,
-                                                             distance))
-
-    print(datetime.datetime.now() - start)
+                                                                 second.tweet_id,
+                                                                 distance))
