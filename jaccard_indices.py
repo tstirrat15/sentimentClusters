@@ -68,7 +68,9 @@ class TweetProcessor(object):
 if __name__ == "__main__":
 
     # Set up argument parsing
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=""""Takes an SQLite database
+        of tweets as an input, and outputs a list of tweet ID pairs along with
+        their Jaccard index, based on a processed version of each tweet.""")
     parser.add_argument("input", help="Input SQLite file")
     parser.add_argument("output", help="Output file - .ipairs is the preferable extension")
 
