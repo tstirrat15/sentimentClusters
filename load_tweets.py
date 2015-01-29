@@ -4,6 +4,7 @@
 import json
 import dataset
 import argparse
+from tweet_cleaning import TweetProcessor
 
 
 class JSONObject(dict):
@@ -29,13 +30,14 @@ def get_object_hook(data):
     return JSONObject(data)
 
 
-def get_tweet_data(json_string):
+# Passing down the parser like this is a hack.
+def get_tweet_data(json_string, parser):
     tweet_object = json.loads(json_string, object_hook=get_object_hook)
-    tweet_dict = get_tweet_dict_from_object(tweet_object)
+    tweet_dict = get_tweet_dict_from_object(tweet_object, parser)
     return tweet_dict
 
 
-def get_tweet_dict_from_object(tweet_object):
+def get_tweet_dict_from_object(tweet_object, parser):
     tweet_dict = {}
 
     # Assigning all of the attributes to dictionary values
@@ -66,6 +68,9 @@ def get_tweet_dict_from_object(tweet_object):
     tweet_dict["user_utc_offset"] = tweet_object.user.utc_offset
     tweet_dict["user_verified"] = tweet_object.user.verified
 
+    # Add a cleaned tweet field
+    tweet_dict["cleaned_text"] = " ".join(parser.process_tweet(tweet_object.text))
+
     return tweet_dict
 
 if __name__ == '__main__':
@@ -79,8 +84,11 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    # Instantiate tweet parser
+    p = TweetProcessor()
+
     with open(args.input, "r") as json_file:
         with dataset.connect("sqlite:///" + args.output) as db:
-            tweet_dicts = [get_tweet_data(json_string)
+            tweet_dicts = [get_tweet_data(json_string, p)
                            for json_string in json_file]
             db["tweets"].insert_many(tweet_dicts)
