@@ -68,7 +68,6 @@ if __name__ == "__main__":
         of tweets as an input, and outputs a list of tweet ID pairs along with
         their Jaccard index, based on a processed version of each tweet.""")
     parser.add_argument("input", help="Input SQLite file")
-    parser.add_argument("output", help="Output file - .ipairs is the preferable extension")
 
     # Grab arguments from command line
     args = parser.parse_args()
@@ -76,25 +75,16 @@ if __name__ == "__main__":
     # Make paths out of paths from command line
     # May actually be extraneous...
     db_path = os.path.join(os.getcwd(), args.input)
-    network_path = os.path.join(os.getcwd(), args.output)
-
-    # Make sure that we can actually write to the
-    # file before we start iteration
-    if not os.path.isdir(os.path.dirname(network_path)):
-        raise FileNotFoundError("Can't write to path:\n{0}\nCheck that directories exist.".format(network_path))
-
-    # Set up dataset connection to database
-    db = dataset.connect("sqlite:///" + db_path)
-
-    # Make list of Tweet objects out of db rows
-    tweets = (Tweet(row["id_str"], row["text"]) for row in db["tweets"].all())
 
     # Initialize the tweet processor
     p = TweetProcessor()
 
-    # Clean all tweets on one pass, and write cleaned tweets to the
-    # output file
-    with open(network_path, "w") as output:
+    # Set up dataset connection to database
+    with dataset.connect("sqlite:///" + db_path) as db:
+        tweets = [Tweet(row["id_str"], row["text"]) for row in db["tweets"].all()]
+
+    with dataset.connect("sqlite:///" + db_path) as db:
         for tweet in tweets:
             tweet.cleaned = p.process_tweet(tweet.content)
-            output.write("{0}\t{1}\n".format(tweet.tweet_id, " ".join(tweet.cleaned)))
+            tweet.cleaned = " ".join(tweet.cleaned)
+            db["tweets"].update({"id_str": tweet.tweet_id, "cleaned": tweet.cleaned}, ["id_str"])
