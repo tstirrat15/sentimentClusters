@@ -3,3 +3,5 @@ __pycache__/
 cluster_settings.py
 test.txt
 ganxis/
+*.zip
+/data/

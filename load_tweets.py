@@ -41,7 +41,7 @@ def get_tweet_dict_from_object(tweet_object):
     # Assigning all of the attributes to dictionary values
     tweet_dict["text"] = tweet_object.text
     tweet_dict["id_str"] = tweet_object.id_str
-    tweet_dict["retweeted"] = tweet_object.retweeted
+    tweet_dict["was_retweeted"] = tweet_object.retweeted
     tweet_dict["created_at"] = tweet_object.created_at
     tweet_dict["retweet_count"] = tweet_object.retweet_count
     tweet_dict["truncated"] = tweet_object.truncated
@@ -54,6 +54,12 @@ def get_tweet_dict_from_object(tweet_object):
     else:
         tweet_dict["tweet_lat"] = None
         tweet_dict["tweet_long"] = None
+
+    # Check to see whether retweeted_status exists, set is_retweet accordingly
+    if hasattr(tweet_object, "retweeted_status"):
+        tweet_dict["is_retweet"] = True
+    else:
+        tweet_dict["is_retweet"] = False
 
     tweet_dict["user_created_at"] = tweet_object.user.created_at
     tweet_dict["user_description"] = tweet_object.user.description
