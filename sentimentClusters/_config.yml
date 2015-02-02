@@ -1,6 +1,6 @@
 # Site settings
-title: Your awesome title
-email: your-email@domain.com
+title: Sentiment Clusters
+email: tstirrat@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
   Write an awesome description for your new site here. You can edit this
   line in _config.yml. It will appear in your document head meta (for
@@ -16,7 +16,21 @@ markdown: kramdown
 # Used for Navigation Links.
 # Needs to be updated every time there's a new page added.
 navigation:
-- text: Home
-  url: /index.html
-- text: Travel
-  url: /travel.html
+- text: Abstract
+  title: Abstract
+  url: /_pages/abstract.html
+- text: Data Collection
+  url: /_pages/data_collection.html
+  title: Data Collection
+- text: Munging
+  title: Munging
+  url: /_pages/munging.html
+- text: Finding Communities
+  title: Finding Communities
+  url: /_pages/finding_communities.html
+- text: Analysis
+  title: Analysis
+  url: /_pages/analysis.html
+- text: Conclusions
+  title: Conclusions
+  url: /_pages/conclusions.html
