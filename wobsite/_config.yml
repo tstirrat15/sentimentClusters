@@ -18,19 +18,22 @@ markdown: kramdown
 navigation:
 - text: Abstract
   title: Abstract
-  url: /_pages/abstract.html
+  url: /abstract/
 - text: Data Collection
-  url: /_pages/data_collection.html
+  url: /data_collection/
   title: Data Collection
 - text: Munging
   title: Munging
-  url: /_pages/munging.html
+  url: /munging/
 - text: Finding Communities
   title: Finding Communities
-  url: /_pages/finding_communities.html
+  url: /finding_communities/
 - text: Analysis
   title: Analysis
-  url: /_pages/analysis.html
+  url: /analysis/
 - text: Conclusions
   title: Conclusions
-  url: /_pages/conclusions.html
+  url: /conclusions/
+
+# Make it so that pages are included
+include: ['_pages']
