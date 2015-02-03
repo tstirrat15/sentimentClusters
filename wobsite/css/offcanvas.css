@@ -8,9 +8,21 @@ body {
 }
 body {
   padding-top: 70px;
+  /*background-image: linear-gradient(rgba(255, 255, 128, 0.1), rgba(255, 255, 128, 0.1)), url("../assets/bg.png");*/
 }
 footer {
   padding: 30px 0;
+}
+
+/*.main-content {
+  background-color: white;
+  border-radius: 5px;
+}
+*/
+
+.fixed {
+  position: fixed;
+  width: inherit;
 }
 
 /*
