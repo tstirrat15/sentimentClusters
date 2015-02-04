@@ -1,8 +1,2 @@
 *.sublime*
-__pycache__/
-cluster_settings.py
-test.txt
-ganxis/
-*.zip
-/data/
-/wobsite/_site/
+_site/
