@@ -4,7 +4,7 @@ email: tstirrat@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
   An approach to analyzing the content and sentiments of tweets
   through natural language processing and network theory.
-baseurl: "/sentimentClusters/" # the subpath of your site, e.g. /blog/
+baseurl: "/sentimentClusters" # the subpath of your site, e.g. /blog/
 url: "https://tstirrat15.github.io/" # the base hostname & protocol for your site
 
 # Build settings

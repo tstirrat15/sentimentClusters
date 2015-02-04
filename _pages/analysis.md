@@ -46,3 +46,5 @@ Protests in Ferguson remained on twitter’s mind for the next few days and we s
 Tensions between the Ferguson police department and protestors began to thaw around August 21st with the systematic withdrawal of the National Guard from the city, and with that relative peace came a drop in the amount of tweets being made every day and clusters such as tear gas and National Guard becoming practically invisible within all the combined clusters.  Without any major events going on within the protests, it was still tweeted about but not at nearly as high numbers as earlier in the month, which is why we chose to make the second half of our sample take place during November and into December, which captured the Grand Jury’s decision and other events.
 
 ### November and December
+
+![img]()
