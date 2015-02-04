@@ -25,6 +25,9 @@ navigation:
 - text: Finding Communities
   title: Finding Communities
   url: /finding_communities/
+- text: Assumptions
+  url: /assumptions/
+  title: Assumptions
 - text: Analysis
   title: Analysis
   url: /analysis/
