@@ -237,7 +237,7 @@ The [Euclidean distance](http://en.wikipedia.org/wiki/Euclidean_distance) is the
 
 ### Comparing the Distances
 
-![img](/assets/jaccard_distance_distribution.png){: .img-responsive}
+![img]({{ site.baseurl }}/assets/jaccard_distance_distribution.png){: .img-responsive}
 
 After running a few trials with different clustering methods, we realize that Jaccard distance does not work as well as the the Euclidean distance. As shown below, most of our Jaccard distance indices are from 0.9 to 1 even when we remove all the terms that occurs less than 0.1% in our sample. This short spread causes difficulties for most algorithms in identifying clusters.
 
@@ -245,7 +245,7 @@ Therefore, we choose Euclidean metric to calculate the distance matrix required 
 
 ## Word Frequency Analysis
 
-![img](/assets/word_frequency_distribution.png){: .img-responsive}
+![img]({{ site.baseurl }}/assets/word_frequency_distribution.png){: .img-responsive}
 
 There are approximately 17000 unique words in the whole tweets text. As shown in the histogram, the distribution of word frequency is significantly skewed to the right, which means there are a lot of words that do not appear much. These less frequent words increase the dimensions of our problem; as a result, tweets are further from each other. We see these words as “noise” in our data, since they are probably not keywords which help categorize a tweet in any subtopic.Therefore, we decided to remove the words that appear less than 0.1%, which means on average they appear less than once in 1000 tweets.
 
@@ -264,6 +264,6 @@ In hierarchical clustering, each tweet starts out as its own cluster. At each st
 
 ### The Output
 
-![img](/assets/hierarchical_dendrogram.png){: .img-responsive}
+![img]({{ site.baseurl }}/assets/hierarchical_dendrogram.png){: .img-responsive}
 
 This dendrogram is a clustering map showing which clusters are combined at each step. Having this dendrogram, we can decide how many clusters we want to create by cutting the dendrogram horizontally. We decided to divide our tweets into 13 groups, which you can see in the red boxes in the graph; each is a group of tweets. We chose 13 in order to make the size of each cluster reasonable.

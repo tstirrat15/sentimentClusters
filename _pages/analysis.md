@@ -18,7 +18,7 @@ We wanted to start our analysis by identifying the location from which the tweet
 
 Given that we lacked information on latitude and longitude, we needed to construct a map that best represented the data that we collected without the use of the US map. We decided that a tree map would provide a good visual of the frequency of tweets within each region. In addition to grouping tweets by region, we added a second level to analyze the frequency of tweets, in their cluster groups, within each region.
 
-![img](/assets/tweet_time_zone_tree_map.png){: .img-responsive}
+![img]({{ site.baseurl }}/assets/tweet_time_zone_tree_map.png){: .img-responsive}
 
 
 The tree map shows us that the Eastern Time Zone has the most number of tweets among all of the time zones. The Central Time Zone was the second largest group. It is interesting that there are more tweets about Ferguson in Eastern Time than there are in Central Time given that Ferguson, MO is in the middle of the Central Time Zone. We suspected that the possible reason for these results were that there were also incidents of police shootings in New York and Ohio with Eric Garner and Tamir Rice, respectively. The shootings may have motivated individuals in those areas to tweet more about issues related to Ferguson and the protests, causing a rise in tweets in that region.
@@ -37,7 +37,7 @@ In addition to seeing how the conversations on twitter were different based on w
 
 By creating a stacked graph of how many tweets were made per day by each cluster, we can examine how the conversation changed over time; our samples took tweets from the month of August when the Ferguson protests began, and from November to early December centered around when the Grand Jury released their indictment decision, so we created a stacked graph of each sample to avoid needing to truncate a complete timeline that would have no tweets during September or October.
 
-![img](/assets/august_tweets_stream_graph.png){: .img-responsive}
+![img]({{ site.baseurl }}/assets/august_tweets_stream_graph.png){: .img-responsive}
 
 The August sample starts gathering tweets from the 10th, one day after the death of Michael Brown, and within two days it had become a fairly popular subject of discussion, and that in this initial period only a few clusters were being discussed, mainly the two general clusters but there is a noticeable amount of tweets from the “race” and “tear gas” clusters as well. November 14th was the day that discussion of Ferguson ballooned into a national subject as President Obama gave a national address on Brown’s death, the Ferguson police and the protests that had taken place in response to the situation; while every cluster experienced growth in this spike, the “police reform” cluster takes a much larger percentage of tweets that day and never has a percentage so high again.
 
