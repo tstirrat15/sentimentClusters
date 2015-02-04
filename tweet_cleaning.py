@@ -2,17 +2,13 @@
 import os.path
 import re
 import dataset
-import itertools
 import argparse
 
 # NTLK imports
 import nltk.corpus
 
-# Distance import
-from distance import jaccard
-
-
 # Someday: set this up for parallel processing, based on number of cores
+
 
 class Tweet(object):
     """Holds attributes of tweets"""
@@ -72,7 +68,6 @@ if __name__ == "__main__":
         of tweets as an input, and outputs a list of tweet ID pairs along with
         their Jaccard index, based on a processed version of each tweet.""")
     parser.add_argument("input", help="Input SQLite file")
-    parser.add_argument("output", help="Output file - .ipairs is the preferable extension")
 
     # Grab arguments from command line
     args = parser.parse_args()
@@ -80,45 +75,16 @@ if __name__ == "__main__":
     # Make paths out of paths from command line
     # May actually be extraneous...
     db_path = os.path.join(os.getcwd(), args.input)
-    network_path = os.path.join(os.getcwd(), args.output)
-
-    # Make sure that we can actually write to the
-    # file before we start iteration
-    if not os.path.isdir(os.path.dirname(network_path)):
-        raise FileNotFoundError("Can't write to path:\n{0}\nCheck that directories exist.".format(network_path))
-
-    # Set up dataset connection to database
-    db = dataset.connect("sqlite:///" + db_path)
-
-    # Make list of Tweet objects out of db rows
-    tweets = [Tweet(row["id_str"], row["text"]) for row in db["tweets"].all()]
 
     # Initialize the tweet processor
     p = TweetProcessor()
 
-    # Clean all tweets on one pass.
-    for tweet in tweets:
-        tweet.cleaned = p.process_tweet(tweet.content)
+    # Set up dataset connection to database
+    with dataset.connect("sqlite:///" + db_path) as db:
+        tweets = [Tweet(row["id_str"], row["text"]) for row in db["tweets"].all()]
 
-    with open(network_path, "w") as output:
-        # Iterates over all pairs without repetition
-        for first, second in itertools.combinations(tweets, 2):
-
-            # Only try and calculate distance if both sets are nonempty
-            # Otherwise jaccard index has a divide by zero error
-            if first.cleaned and second.cleaned:
-                distance = 1 - jaccard(first.cleaned, second.cleaned)
-            else:
-                distance = 0
-
-            # Only write to output if distance is nonzero - makes the
-            # network file smaller and easier to handle. Can easily
-            # be parsed in later.
-
-            # Output format is based on GANXiS's input specification.
-            # GANXiS looks for edges in both directions, so print tweet
-            # IDs in both orders.
-            if distance:
-                output.write("{0} {1} {2}\n{1} {0} {2}\n".format(first.tweet_id,
-                                                                 second.tweet_id,
-                                                                 distance))
+    with dataset.connect("sqlite:///" + db_path) as db:
+        for tweet in tweets:
+            tweet.cleaned = p.process_tweet(tweet.content)
+            tweet.cleaned = " ".join(tweet.cleaned)
+            db["tweets"].update({"id_str": tweet.tweet_id, "cleaned": tweet.cleaned}, ["id_str"])
