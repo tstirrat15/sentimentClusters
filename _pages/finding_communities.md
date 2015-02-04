@@ -212,7 +212,7 @@ The categories seen below were generated manually by referencing the original tw
 </table>
 
 
-![img](/assets/labeled_cluster_relative_frequency.png)
+![img]({{ site.baseurl }}/assets/labeled_cluster_relative_frequency.png)
 
 As you can see, there are two massive clusters, which together consists of 73% of the tweets in our data set. This leaves room for further improvement in terms of cleaning data and choosing the optimal clustering algorithm for this type of problem.
 

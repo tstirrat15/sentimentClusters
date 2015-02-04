@@ -13,24 +13,21 @@ markdown: kramdown
 # Used for Navigation Links.
 # Needs to be updated every time there's a new page added.
 navigation:
-- text: Abstract
-  title: Abstract
-  url: /abstract/
+- text: Sources
+  title: Data and tools
+  url: /sources/
 - text: Data Collection
   url: /data_collection/
-  title: Data Collection
+  title: How we pulled it together
 - text: Munging
-  title: Munging
+  title: Sorting and sifting and parsing
   url: /munging/
 - text: Finding Communities
-  title: Finding Communities
+  title: Metrics and networks
   url: /finding_communities/
 - text: Analysis
-  title: Analysis
+  title: What we found
   url: /analysis/
-- text: Conclusions
-  title: Conclusions
-  url: /conclusions/
 
 # Make it so that pages are included
 include: ['_pages']

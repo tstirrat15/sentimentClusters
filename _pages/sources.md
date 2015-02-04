@@ -1,8 +1,8 @@
 ---
 layout: page
-title: Conclusions
-permalink: /conclusions/
-description: Bringing it all together.
+title: Sources
+permalink: /sources/
+description: The data and tools we used in our project
 headings:
 - top
 - hipster1
