@@ -7,6 +7,10 @@ Michael Christiansen, Thao Nguyen, Aldrin Barraquio, Tanner Stirrat
 
 # Package Contents:
 
+## Python
+
+### Package dependencies:
+
 ## R
 
 ### Package dependencies:
@@ -21,30 +25,30 @@ Michael Christiansen, Thao Nguyen, Aldrin Barraquio, Tanner Stirrat
 
 #### combine.R:
     Description:	script to combine 2 data sets - August and November into 1 single data set.
-    File inputs: tweets.Rdata, tweetsInd.Rdata
-    File outputs: tweetsAll.rda
+    File inputs:	tweets.Rdata, tweetsInd.Rdata
+    File outputs:	tweetsAll.rda
 #### textMining.R
     Description:	script for natural language processing, creating tweets-vector data frame and frequency analysis
-    File inputs: tweetsAll.rda
-    File outputs: tweetsDF.rda
-    Source code: func.R
+    File inputs:	tweetsAll.rda
+    File outputs:	tweetsDF.rda
+    Source code:	func.R
 #### distance.R
     Description:	script to calculate distance and cluster tweets
-    File inputs: tweetsDF.rda
-    File outputs: tweetsClus.rda
-    Source code: func.R
+    File inputs:	tweetsDF.rda
+    File outputs:	tweetsClus.rda
+    Source code:	func.R
 #### func.R
     Description:	includes functions for textMining.R, distance.R and stackPlot.R
 #### analysis.R
     Description: 	creates visualizations for the analysis
-    File inputs: tweetsClus.rda
+    File inputs:	tweetsClus.rda
 #### treemapanalysis.R
     Description: 	script to sort tweets into time zones and to construct a treemap
-    File inputs: tweetsClus.rda
+    File inputs:	tweetsClus.rda
 #### Split time.R
     Description:	script to parse created_at and create variables for stackPlot.R
-    File inputs: tweetsClus.rda
+    File inputs:	tweetsClus.rda
 #### stackPlot.R
 	Description:	script to create stackplots
-	File inputs: tweetsClus.rda, Split time.R
-	Source code: func.R
+	File inputs:	tweetsClus.rda, splitTime.R
+	Source code:	func.R
