@@ -31,7 +31,7 @@ class TweetProcessor(object):
         # Compile regex expressions for later reuse
         self.retweet_regex = re.compile(r'^rt @[\w]{1,15}: ')
         self.ferguson_ht_regex = re.compile(r'#ferguson')
-        self.url_regex = re.compile(r'http[s]?://\S+\b/?')
+        self.url_regex = re.compile(r'http[s]?:\S+')
         self.callout_regex = re.compile(r'@\w+')
         self.token_regex = re.compile(r'\b\S+\b')
 
