@@ -15,11 +15,6 @@
 		<!-- Side nav -->
 		<div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">
 		<!-- <div class="fixed"> -->
-			<div class="list-group">
-				{% for link in site.navigation %}
-				<a {% if page.url == link.url %} class="list-group-item active" {% else %} class="list-group-item" {% endif %} href="{{ site.baseurl }}{{link.url}}" title="{{link.title}}">{{link.text}}</a></li>
-				{% endfor %}
-			</div>
 			{% if page.headings %}
 				<div class="list-group">
 					{% for heading in page.headings %}
