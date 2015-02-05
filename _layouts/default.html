@@ -18,7 +18,7 @@
 			{% if page.headings %}
 				<div class="list-group">
 					{% for heading in page.headings %}
-					<a class="list-group-item" href="#{{ heading }}">{{ heading }}</a>
+					<a class="list-group-item" href="#{{ heading.link }}">{{ heading.title }}</a>
 					{% endfor %}
 				</div>
 			{% endif %}
@@ -28,6 +28,15 @@
 
 		{% include footer.html %}
 	</div>
+
+<!-- Scroll-along back-to-top link -->
+<!-- child of the body tag -->
+<span id="top-link-block" class="hidden">
+    <a href="#top" class="well well-sm" onclick="$('html,body').animate({scrollTop:0},'fast');return false;">
+        <i class="glyphicon glyphicon-chevron-up"></i> Back to Top
+    </a>
+</span><!-- /top-link-block -->
+
 </body>
 
 </html>

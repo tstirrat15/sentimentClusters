@@ -25,6 +25,27 @@ footer {
   width: inherit;
 }
 
+
+/* Fixes where anchor links jump to */
+.anchor {
+  display: block;
+  position: relative;
+  top: -60px;
+  visibility: hidden;
+}
+
+/* CSS for scrolly back-to-top link*/
+#top-link-block.affix-top {
+    position: absolute; /* allows it to "slide" up into view */
+    bottom: -82px;
+    right: 10px;
+}
+#top-link-block.affix {
+    position: fixed; /* keeps it on the bottom once in view */
+    bottom: 18px;
+    right: 10px;
+}
+
 /*
  * Off Canvas
  * --------------------------------------------------

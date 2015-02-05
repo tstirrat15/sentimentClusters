@@ -4,13 +4,18 @@ title: Finding Communities
 permalink: /finding_communities/
 description: How we went about grouping tweets together
 headings:
-- top
-- hipster1
-- hipster2
-- hipster3
-- hipster4
-- hipster5
+- link: clusters
+  title: Our Clusters
+- link: "finding-distance"
+  title: Finding Distance
+- link: "distance-comparison"
+  title: Distance Comparison
+- link: "freq-analysis"
+  title: Word Frequency Analysis
+- link: algorithm
+  title: The Algorithm
 ---
+<a id="clusters" class="anchor"></a>
 
 ## Our Clusters
 
@@ -216,6 +221,8 @@ The categories seen below were generated manually by referencing the original tw
 
 As you can see, there are two massive clusters, which together consists of 73% of the tweets in our data set. This leaves room for further improvement in terms of cleaning data and choosing the optimal clustering algorithm for this type of problem.
 
+<a id="finding-distance" class="anchor"></a>
+
 ## How We Found Them
 
 ###Finding Distance:
@@ -235,6 +242,8 @@ This index measures the similarity between two text documents by the number of w
 
 The [Euclidean distance](http://en.wikipedia.org/wiki/Euclidean_distance) is the ordinary distance between two points in the Euclidean space. In our project, each tweet, which is converted to a binary vector, can be considered a point in space; therefore, we can compute the Euclidean distance between any two tweets.
 
+<a id="distance-comparison" class="anchor"></a>
+
 ### Comparing the Distances
 
 ![img]({{ site.baseurl }}/assets/jaccard_distance_distribution.png){: .img-responsive}
@@ -243,13 +252,17 @@ After running a few trials with different clustering methods, we realize that Ja
 
 Therefore, we choose Euclidean metric to calculate the distance matrix required for the clustering algorithm.
 
+<a id="freq-analysis" class="anchor"></a>
+
 ## Word Frequency Analysis
 
 ![img]({{ site.baseurl }}/assets/word_frequency_distribution.png){: .img-responsive}
 
 There are approximately 17000 unique words in the whole tweets text. As shown in the histogram, the distribution of word frequency is significantly skewed to the right, which means there are a lot of words that do not appear much. These less frequent words increase the dimensions of our problem; as a result, tweets are further from each other. We see these words as “noise” in our data, since they are probably not keywords which help categorize a tweet in any subtopic.Therefore, we decided to remove the words that appear less than 0.1%, which means on average they appear less than once in 1000 tweets.
 
-## Choice of Algorithm
+<a id="algorithm" class="anchor"></a>
+
+## The Algorithm
 
 <!-- What were the other methods that we tried? -->
 

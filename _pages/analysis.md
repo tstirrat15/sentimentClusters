@@ -4,13 +4,17 @@ title: Analysis
 permalink: /analysis/
 description: What we found upon peering in.
 headings:
-- top
-- hipster1
-- hipster2
-- hipster3
-- hipster4
-- hipster5
+- link: august
+  title: "The Conversation: August"
+- link: novdec
+  title: "The Conversation: Nov. - Dec."
+- link: echo
+  title: Echo Chambers
+- link: geography
+  title: The Geography of Tweets
 ---
+
+<a id="august" class="anchor"></a>
 
 ## The Conversation Over Time
 
@@ -28,6 +32,8 @@ Protests in Ferguson remained on twitter’s mind for the next few days and we s
 
 Tensions between the Ferguson police department and protestors began to thaw around August 21st with the systematic withdrawal of the National Guard from the city, and with that relative peace came a drop in the amount of tweets being made every day and clusters such as tear gas and National Guard becoming practically invisible within all the combined clusters.  Without any major events going on within the protests, it was still tweeted about but not at nearly as high numbers as earlier in the month, which is why we chose to make the second half of our sample take place during November and into December, which captured the Grand Jury’s decision and other events.
 
+<a id="novdec" class="anchor"></a>
+
 ### November and December
 
 ![img]({{ site.baseurl }}/assets/november_december_tweets_stream.png){: .img-responsive}
@@ -37,6 +43,8 @@ Starting with tweets from November 11th, we see that the twitter discussion on F
 Throughout this spike we see that the “race” cluster is more active than it had been at any other point in time, as is the “riot” cluster, showing that the Grand Jury’s decision turned a corner in how twitter discussed the Ferguson protests. For many, the non-indictment was a racially-motivated failure of the justice system and many ideas and hashtags created during the Trayvon Martin protests, such as #blacklivesmatter, were reclaimed and used again to discuss racial divides in America. However, to many others the continued, and increasingly violent, protests after the decision seemed to be rioting against the justice system and a demand for a mob-rule decision on the issue. After three hectic days of mass protesting and tweeting, tweets began to drop off rapidly as the Ferguson government held strong to the decision of the Grand Jury. The decrease in tweets ends on November 29th, when Officer Wilson announced his resignation from the Ferguson police department, and the “indictment decision” cluster grows larger which we believe is directed again at the non-indictment decision and that willingly leaving his job was not enough of a punishment.
 
 The last major event of the Ferguson protests happened on December 1st, the “Hands Up, Walk Out” solidarity movement was a nationwide scheduled walk-out against the non-indictment decision. This event also saw a return of the “police reform” cluster which had largely been inactive except during times when all clusters saw increases, this could be showing a return to the earlier idea of focusing the protests on demanding a demilitarization of police forces and adding additional checks on officers such as cameras on uniforms to remove ambiguity of events like Brown’s death.
+
+<a id="echo" class="anchor"></a>
 
 ## Echo Chambers
 
@@ -51,6 +59,8 @@ Each time a user retweet from another person they will put “RT” characters i
 ![img]({{ site.baseurl }}/assets/retweet_relative_frequency.png){: .img-responsive}
 
 Immediately, we can see that two of our clusters have a ridiculously high percentage of retweets, where every tweet contained in the cluster is a retweet of the same original tweet. With tens of thousands of our tweets being the exact same message, it makes sense that any significant number of retweets would be clustered together and excludes any other tweets, and because we took only a small sample of the total tweets we have, these clusters may not be representative of the entire data set. For our other 11 clusters however, it is surprising that every one of them features a retweet percentage of over 50%, and may be indicative of twitter functioning as an echochamber for its users.
+
+<a id="geography" class="anchor"></a>
 
 ## The Geography of Tweets
 
